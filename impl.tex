@@ -1,0 +1,23 @@
+\section{Implementation in Spark}\label{sec:impl}
+
+We have implemented Dynamic Delay Scheduling in Spark, for tasks which read data from 
+HDFS as input. The \textit{t\_netOH} for each task is implemented as a new field in 
+each TaskContext, called \textit{netOH}. To compute the overhead, we have inserted a 
+wrapper for the HDFS RecordReader, which sums reading time. When a task completes, it 
+will set \textit{netOH} to this sum, and then send it back to the Spark scheduler via the 
+event bus that drives the system. While we have focused our implementation on "map-like" 
+tasks which read from HDFS (which have predictable behavior), any arbitrary task could 
+monitor its own overhead and set this field before closing.
+
+The Spark Scheduler, when it sees a TaskCompleted event, will pull off that task's 
+\textit{netOH} and average it into a global \textit{delay\_interval} that is used for all 
+tasks in the same "stage" (stages are groups of tasks which do the same thing). Then, 
+when a slot opens up in the cluster, the most recent \textit{delay\_interval} will be 
+used in place of the delay interval fetched from the spark-defaults.conf file. 
+
+Overall, the implementation consists of about 100 lines of Scala code, which modify
+the already-existing fixed delay scheduling mechanisms as well as store a small
+bit of extra state. The implementation is simple enough to be adapted to other frameworks
+that use delay scheduling as well, as most systems (such as Hadoop) also have events/messages
+that inform the scheduler with information about finished tasks.
+

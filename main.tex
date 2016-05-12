@@ -38,7 +38,7 @@
 %%%
 %\usepackage{macros}
 \ifcode
-\usepackage[ruled]{algorithm}
+\usepackage[linesnumbered, ruled]{algorithm2e}
 \usepackage{algpseudocode}
 \usepackage{ioa_code}
 
@@ -260,7 +260,7 @@
 \newcommand{\p}[1]{\mynote{Patrick}{#1}{magenta}}
 \newcommand{\masoud}[1]{\mynote{Masoud}{#1}{magenta}}
 \newcommand{\bsang}[1]{\mynote{bsang}{#1}{magenta}}
-\newcommand{\bo}[1]{\mynote{Bo}{#1}{magenta}}
+\newcommand{\sr}[1]{\mynote{SR}{#1}{magenta}}
 
 \newcommand{\contextclass}{contextclass}
 
@@ -275,7 +275,7 @@
 
 \bibliographystyle{plain}
 
-\title{Dynamic Delay Scheduling: Adaptive Solutions for Task Scheduling in the Cloud}
+\title{Reducing latency in cloud processing/data stores via adaptive scheduling}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \date{}
@@ -292,333 +292,32 @@
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Introduction}\label{sec:intro}
-Cluster computing systems like Hadoop [ref], and Spark[ref] have been widely 
-used in many companies such as Google, Yahoo, Facebook, and Microsoft. Their popularity 
-brings forth new problems in the realm of task scheduling and management in these systems,
-particularly with the rise of the cloud as a platform to host these frameworks.
 
-In this paper, we explore the problem of sharing a cluster between users while preserving 
-the efficiency of systems like Hadoop and Spark --- specifically, finding a trade-off 
-between locality (i.e., the placement of computation near its input data) and fairness. 
-Locality is important for task (and thus job) performance, as it reduces the amount of data 
-that needs to travel across the network, while fairness is important for clusters to be 
-useful to multiple users at load. 
+\input{introduction}
+\input{background}
+\input{systems}
+\input{dynamic}
+\input{impl}
+\input{eval}
 
-Figure~\ref{fig:cluster}  demonstrates these tradeoffs between data locality and fairness,
-in a simple four-machine cluster. We consider a
-scenario where a "job" consists of many smaller tasks, and each node in the cluster 
-has a finite number of "slots" which provide resources for tasks. Every task has input data,
-located in some distributed file system in blocks across the cluster. When a slot
-becomes available (a slot representing the resources to run a single task),
-a scheduler that provides fair sharing needs to schedule tasks from the job 
-that is farthest below its fair share first. In Figure 1, the job furthest below
-the fair share is clearly Job 1, so a task from Job 1 will be chosen for the empty slot; however,
-Job 1 has no input data on Machine 3, meaning that the task will need to transfer a block
-of data over the network in order to proceed, incurring additional overhead and causing
-worse performance. The question becomes: what should a fair scheduler do
-in this situation? Should it sacrifice performance to enforce fairness, or choose another task
-with local data and remedy the fairness imbalance later? 
-
-\begin{figure}[t]
-    \minipage{0.5\textwidth}
-        \includegraphics[width=\linewidth]{./fig1.png}
-        \caption{A compute cluster, with a fair scheduler that must fill an empty slot}
-        \label{fig:cluster}
-    \endminipage
-\end{figure}
-
-The Hadoop Fair Scheduler (HFS) is an influential example of a cluster framework 
-scheduler that seeks to find this balance. The HFS was designed with two main goals: 
-\textit{Fair sharing}: dividing resources using max-min fair sharing [ref] to achieve 
-statistical multiplexing, and 
-\textit{Data locality}: placing computations (tasks) near their input data as often as
-possible, to maximize system throughput.
-
-To achieve the first goal (fair sharing), a scheduler must reallocate resources between 
-jobs when the number of jobs changes; however, a strict implementation of fair sharing 
-compromises locality, because the job to be scheduled next according to fairness might not
-have data on the nodes that are currently free. To resolve this problem, the HFS relaxes 
-fairness slightly through a simple algorithm called 
-\textit{delay scheduling}~\cite{Zaharia:2010}, in which a 
-job waits for a fixed amount of time for additional scheduling opportunities on nodes 
-that have data for it, if none are available.
-
-The original delay scheduling work [ref] reported that a small amount of waiting is enough
-to bring locality close to 100\% (the chosen default value is three seconds). Since its 
-inception, delay scheduling has been used in other cluster framekwork schedulers, such as 
-Spark, as well as in resource managers, such as YARN[ref] and Mesos[ref]. 
-
-Delay scheduling provides a simple solution for the scenario in 
-Figure~\ref{fig:cluster}. Job 1 will simply be delayed for a fixed interval (and a task
-from Job 3 scheduled in its place) in the hopes that data-local slots will open up in 
-the future; however, delay scheduling assumes that data locality is always beneficial.
-In reality, the decision is not as simple. The importance of data locality depends on many
-factors, such as network conditions, input data size, disk i/o usage, and others. These
-conditions may change over time (or even during the execution of a job). As well, with clusters
-in the public cloud becoming so common, cluster conditions can change as simultaneous user
-load changes, or after instances are stopped and restarted, potentially in a different physical
-configuration. So, the
-decision of whether or not to delay (and for how long) can not be efficiently solved with
-a fixed, unchanging delay interval. We propose that an adaptive mechanism is needed,
-in order to properly judge and exploit these tradeoffs between fairness and locality,
-based on feedback from the system.
-
-In this paper, we present Dynamic Delay Scheduling, a simple, low-state, adaptive
-solution for task scheduling in the cloud, which improves job latency over
-fixed-interval delay scheduling. Dynamic Delay Scheduling operates by using feedback from finished
-tasks in the system, which report their perceived overhead from remote data
-reads. Our scheduler then adapts the delay scheduling interval to be used to schedule subsequent
-tasks, using a running average of the overhead metrics reported as the interval
-itself. This paper contributes a detailed outline of this adaptive solution. We have
-also implemented a simple prototype in Spark. We will further demonstrate that
-an adaptive delay outperforms the current Spark distribution (which uses a fixed delay
-scheduling interval) in TPC-H workloads.
-
-The remainder of this paper is structured in the following way. DOT DOT DOT.
-
-
-\section{Delay Scheduling Background}\label{sec:overview}
-
-Delay scheduling is a heuristic designed to improve the data locality of tasks in the
-context of fairness policy enforcement. We consider a cluster computing setting, where each 
-application (or job), when submitted, is divided into many tasks which can be executed in 
-parallel. The main components involved are: 1) a set of \textit{N} compute nodes, each with 
-\textit{S} slots (one slot can run one task at a time), 2) a set of \textit{J} jobs, each 
-with \textit{T} tasks, and 3) a set of \textit{D} blocks of data, distributed across the 
-compute nodes, where each task in a job operates on one (specific) block.
-
-To constitute fairness, each of the \textit{J} jobs must have an equal share of the 
-cluster's resources. If there are 2 jobs, then each gets half of the cluster, if there 
-are 3, then a third, etc. To implement this, a fair scheduler must maintain a sorted 
-queue of the remaining jobs, based on their current share of the cluster. The job with 
-the least running tasks (the job farthest below its fair share of resources) is at the 
-head of this queue. Let us call this job \textit{J\_priority}. Tasks from this job will 
-take priority over the rest in the queue.
-   
-An observation that can be made is that, when a compute slot opens up on one of the 
-\textit{N} nodes, there might not be any data blocks on the node that the tasks of 
-\textit{J\_priority} need. This is called \textit{data locality}. A task can 
-be considered to be data local when it is scheduled in a slot on a node colocated with its
-data. Fairness enforcement compromises data locality, because the next job in the 
-scheduler's queue (based on fairness priority) might not have data in the next open slot 
-in the cluster. Tasks that run non-locally must pull their input data in from across the 
-network, causing an increase in completion time.
-
-Traditional delay scheduling operates in the following way: if 
-\textit{J\_priority} does not have any data blocks it needs in the slot currently being 
-considered, it will be temporarily skipped, and a task from a job further down the queue 
-(a lower priority job) will be scheduled instead. \textit{J\_priority} will remain at the 
-head of the queue (because it is still farthest below its fair share). 
-\textit{J\_priority} will thus be the highest priority job for the next slot that opens 
-up, which hopefully will have data it needs. After a finite number of failed scheduling 
-attempts (skips), \textit{J\_priority} will be scheduled in the next open slot regardless 
-of locality. The maximum number of skips is usually determined by the number of scheduling
-attempts that occur within a certain interval of time (a few seconds). We can call this
-interval of time the \textit{delay interval}.
-
-The argument behind why delay scheduling is acceptable is a probabilistic one. Assuming 
-that slots free up frequently, the chance that an open slot will not overlap with a job's 
-input data decreases exponentially. This chance is further decreased by block replication 
-in distributed file systems (like HDFS), each of which can serve data for a task.
-
-
-\section{Spark and Delay Scheduling}\label{sec:spark}
-
-Apache Spark [ref] is a general execution engine for distributed "Big Data" processing, 
-similar to Hadoop, that breaks jobs into stages of tasks, and uses delay scheduling to 
-improve data locality when launching these tasks. Spark provides many advantages, such 
-as an abstraction for representing distributed datasets (Resilient Distributed Datasets, 
-or RDDs). These RDDs, which represent data either on disk (in Hadoop Distributed File 
-System, or HDFS) or in memory, are divided into partitions across worker processes called 
-executors in the cluster. Each executor has a finite number of slots with which to run 
-tasks. The Spark scheduler, which resides in a centralized driver process separate from 
-the executors, uses delay scheduling to provide greater data locality when scheduling 
-tasks into slots that become open. The delay interval (the maximum waiting time) is set 
-statically in a config file, but can be tailored hierarchically for independent 
-node-local and rack-local delay intervals.
-
-Figure 1 (will be inserted later, with additional info to show multiple jobs/fairness) 
-shows the architecture of a 4-machine Spark cluster in the context of data locality. Each 
-task spawned in Spark has one or several \textit{preferred locations}, which are hosts on 
-which input data resides. If a task is scheduled on a preferred location, then locality 
-has been achieved and data (in this case, an HDFS block) can be read locally. If a task 
-is not scheduled on a preferred location (e.g., tasks I, M, and F in Figure 1), then 
-additional overhead must be incurred to read the block over the network. This is what 
-delay scheduling attempts to minimize.
-
-
-\section{Dynamic Delay}\label{sec:dynamic}
-
-\subsection{The Problem with Constant Delays}
-
-Spark, like other frameworks that use delay scheduling, uses a constant delay interval, 
-which remains the same throughout an entire job. Our observation is that there is a 
-calculable tipping point after which waiting/skipping is no longer beneficial. We can 
-define the total running time of a task \textit{t} as: \newline
-
-\texttt{t\_total = t\_compute + t\_networkOH + scheduler\_delay} \newline
-
-where \textit{t\_compute} is the local computation time of the task, \textit{t\_networkOH}
-is the network latency incurred from data transfer (this is zero if the task is scheduled 
-locally), and \textit{scheduler\_delay} is the amount of time \textit{t} is delayed 
-(skipped) to wait for locality, from the moment \textit{t} is first considered for 
-scheduling.
-
-Ideally, we want to minimize the task completion time of all tasks within a given job, 
-while also providing some guarantee as to the maximum latency introduced by the scheduler
-itself through delay scheduling (the original delay scheduling work does this 
-probabilistically). The goal of delay scheduling is to remove \textit{t\_networkOH} by 
-scheduling a task locally, but if the task is delayed longer than this latency period, 
-then it would have actually been more efficient in hindsight (in terms of task completion time) to immediately schedule the task in the first open slot that was considered. We can 
-immediately improve delay scheduling by dynamically setting the maximum 
-\textit{scheduler\_delay} equal to \textit{t\_networkOH} on a per-task basis. This allows 
-for the longest waiting time for data-local slots while limiting the worst case task 
-running time to \textit{t\_compute + (2 * t\_networkOH)}; however, this means that the 
-network overhead incurred by running tasks needs to be monitored and reported to the 
-scheduler over time, in order to adapt to changing network conditions and potentially 
-heterogeneous data block sizes. 
-
-\subsection{An Adaptive Solution Using Task Feedback}
-
-The network overhead incurred by missing data locality depends on many factors, including 
-network traffic, the distance of a task from its data, and the input data size. These 
-factors vary from job to job, and some (like network traffic) can change during the job 
-execution itself. In order to adapt the delay interval to each job, we have designed a 
-simple feedback mechanism in which each task reports the network overhead it experienced 
-upon completion (\textit{t\_networkOH}, for a task \textit{t}). This metric is sent to a 
-centralized fair scheduler, which then changes its delay scheduling interval using a 
-running average of feedback from completed tasks. This new delay scheduling interval is 
-then used when scheduling subsequent tasks of the same type.
-
-The feedback metric itself (\textit{t\_networkOH}) can be any time measurement which 
-reflects the network overhead incurred by a task. In the case of our algorithm, we are 
-considering tasks which read data from distributed file systems (analogous to the mappers 
-in Hadoop, reading from HDFS, that were the original target of the delay scheduling 
-algorithm), so the \textit{t\_networkOH} for each task is the amount of time spent 
-reading data blocks remotely; however, any arbitrary type of task, which has some way of 
-measuring its own overhead, could set this as well.
-
-\begin{algorithm}
-\footnotesize
-\caption{Dynamic Delay Scheduling Algorithm}
-\begin{algorithmic}[1]
-\State $delay\_interval =$ default (3 seconds)
-\State  
-\State Upon task $t$ completion:
-\State $delay\_interval = (delay\_interval + t.netOH) / 2$
-\State
-\State Scheduling loop:
-\For {each open slot $s$ on a node $n$ in N}
-    \State sort $J$ in increasing order of currently running tasks  //fairness
-    \For {$j$ in $J$}
-        \If {$j$ has just launched a task}
-            \State $j.wait\_begin = current\_time$  //time to begin waiting
-        \EndIf
-        \If {a task $t$ in $j$ has data on $s$'s node $n$}
-            \State launch t in $s$      //local case
-        \Else \If {a task $t$ in $j$ is unlaunched}
-            \If {$current\_time - j.wait\_begin > delay\_interval$}
-                \State launch $t$ in slot $s$   //launch when interval has passed
-            \Else
-                \State continue     //continue waiting
-            \EndIf
-            \EndIf
-        \EndIf
-    \EndFor
-\EndFor
-\end{algorithmic}
-\end{algorithm}
-
-Algorithm 1 describes our adaptive algorithm in detail, in a cluster with \textit{N} nodes and \textit{J} jobs. When tasks complete, the delay interval will be changed to reflect 
-recent cluster conditions. The delay interval adapts relatively quickly (the average of
-the last few readings), since feedback is only returned when tasks complete. For workloads
-in which tasks complete more often, the window for the average can be broadened. 
-During scheduling, this new interval is used for delay scheduling (and this interval can 
-change even while a job is currently waiting, as tasks complete). It is worth noting that 
-there is nothing preventing this adaptive solution from also being hierarchical, as many 
-frameworks desire/implement separate delay intervals for node-local, rack-local, and even 
-datacenter-local scheduling.
-
-\subsection{Implementation in Spark}
-
-We have implemented Dynamic Delay Scheduling in Spark, for tasks which read data from 
-HDFS as input. The \textit{t\_networkOH} for each task is implemented as a new field in 
-each TaskContext, called \textit{netOH}. To compute the overhead, we have inserted a 
-wrapper for the HDFS RecordReader, which sums reading time. When a task completes, it 
-will set \textit{netOH} to this sum, and then send it back to the Spark scheduler via the 
-event bus that drives the system. While we have focused our implementation on "map-like" 
-tasks which read from HDFS (which have predictable behavior), any arbitrary task could 
-monitor its own overhead and set this field before closing.
-
-The Spark Scheduler, when it sees a TaskCompleted event, will pull off that task's 
-\textit{netOH} and average it into a global \textit{delay\_interval} that is used for all 
-tasks in the same "stage" (stages are groups of tasks which do the same thing). Then, 
-when a slot opens up in the cluster, the most recent \textit{delay\_interval} will be 
-used in place of the delay interval fetched from the spark-defaults.conf file. 
-
-\section{Evaluation}\label{sec:eval}
-
-In order to test the efficiency of Dynamic Delay Scheduling, we have designed several 
-tests, on both a small and a large scale, using our implementation in Spark. The goal of
-these experiments is to demonstrate that an adaptive delay interval provides decreased
-job latency in a variety of cluster setups and workloads.
-
-Our small-scale tests were performed on a four node local cluster, with four task slots 
-(four 1.6 GHz cores for Spark tasks) per machine. All four nodes were connected through 
-a gigabit ethernet switch. The workload chosen for the small-scale test was an integer 
-sort, on 1GB of input data spread across HDFS. To provide data locality concerns, 
-input data was placed on two nodes, so as to ensure both data-local and non-local
-slots for task placement. Our large-scale tests were performed on a 16 node cluster on 
-Amazon EC2, using m3.xlarge instances. The workload chosen for the large scale test was 
-a TPC-H benchmark (\#7), which performs a query reading from six databases in HDFS, of 
-size ranging from several megabytes to 80 gigabytes (for a total of ~120GB of input data).
-The benchmark is designed to simulate a business query determining the value of goods 
-shipped between two countries. Stages which perform selects/filters on these tables 
-operate in parallel, and contend for resources in the cluster. All numbers, from both 
-small and large scale, are the average of 3 runs, with error bars shown.
-
-The results of our small-scale tests are shown in Figure 2. We performed the sort with the
-default delay interval (fixed 3 seconds), with dynamic delay scheduling, and with no
-delay for comparison. The default of 3 seconds causes a slight increase in completion
-time (versus no delay). Given that network conditions were very good between the nodes
-in the cluster (all connected to the same switch), having a delay value of 3 seconds
-causes increased overhead, because the network overhead of missing locality is far shorter
-than 3 seconds. Our adaptive solution performs slightly better, because the
-delay interval shrinks based on the feedback from the first round of tasks, although the 
-job is still too small for there to be the kind of resource contention that would result 
-in larger speedups. This experiment simply demonstrates that an incorrect fixed delay
-interval can actually hurt the performance of a job, rather than improve it.
-
-The results of our large-scale TPC-H tests are shown in Figure 3, with the same three 
-delay setups (3 seconds, our dynamic solution, and no delay). Even though the default
-value still improves completion time versus no delay, the dynamic solution outperforms 
-the fixed delay by just under 15\%. Since the dynamic solution eliminates extraneous
-waiting while also still providing an appropriate time to wait for data locality, we see
-an improvement over the fixed delay. The improvement is larger than the small-scale for
-several reasons. First, with this test being performed in the cloud, network guarantees
-are not as strong, creating the need for adaptability if network conditions change. 
-Second, with this being a large workload with hundreds of tasks, there is greater 
-contention for slots amongst all running stages, creating more opportunity for delay 
-scheduling to be applied.
 
 \section{Conclusion}\label{sec:conclusion}
 
 Delay scheduling has long been accepted as a \textit{de facto} solution for achieving
-higher data locality in cluster frameworks. We show that delay scheduling, using a
-fixed delay interval, is inefficient, and can be improved by adapting the delay interval
-on-the-fly, based on the overhead experienced by completed tasks. An adaptive solution
-allows delay scheduling to respond to changing job profiles, network conditions, and
-cluster usage, while still fitting into the mold established by current cluster framework
-schedulers which enforce fairness.
+higher data locality (and assumedly better performance) in cluster framework schedulers that
+enforce fairness. We show that 
+delay scheduling, using a fixed delay interval, is inefficient, and can be improved by 
+adapting the delay interval on-the-fly, based on the overhead experienced by completed tasks. 
+An adaptive solution allows delay scheduling to find a proper balance between fairness and
+performance, based on changing network conditions, job profiles, and cluster usage.
 
-For the future, there are other areas where feedback could be used to create more robust
-adaptive solutions for batch scheduling. With proper estimations and/or feedback on 
-network overhead, task completion time, and other metrics, a schedule could be 
-determined for a job in advance, using some form of optimization, in contrast to the 
-greedy algorithm currently used by batch schedulers. We hope to incorporate these into
-our adaptive solution, to further reduce job completion time while hopefully keeping
-scheduling state minimal.
+Regarding future work, there are other areas where adaptivity looks promising in the realm of
+delay scheduling. For example, the frequency with which tasks complete is major contributor
+to the probability that delay scheduling will actually provide locality, and could potentially
+be used as another adaptive improvement. Other feedback metrics (such as task completion time) 
+hold promise for improvements as well. Finally, avenues exist for optimally creating 
+schedules of tasks (rather than the greedy scheduling currently used), assuming enough accurate
+real-time feedback can be gained from running (or about to run) jobs. 
 
 
 
