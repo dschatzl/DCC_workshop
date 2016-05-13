@@ -1,0 +1,80 @@
+\def\noopsort#1{} \def\No{\kern-.25em\lower.2ex\hbox{\char'27}}
+  \def\no#1{\relax} \def\http#1{{\\{\small\tt
+  http://www-litp.ibp.fr:80/{$\sim$}#1}}}
+\begin{thebibliography}{10}
+
+\bibitem{Boutin2014}
+Eric Boutin, Jaliya Ekanayake, Wei Lin, Bing Shi, Jingren Zhou, Zhengping Qian,
+  Ming Wu, and Lidong Zhou.
+\newblock Apollo: Scalable and coordinated scheduling for cloud-scale
+  computing.
+\newblock In {\em 11th USENIX Symposium on Operating Systems Design and
+  Implementation (OSDI 14)}, pages 285--300, Broomfield, CO, October 2014.
+  USENIX Association.
+
+\bibitem{Hindman:2011}
+Benjamin Hindman, Andy Konwinski, Matei Zaharia, Ali Ghodsi, Anthony~D. Joseph,
+  Randy Katz, Scott Shenker, and Ion Stoica.
+\newblock Mesos: A platform for fine-grained resource sharing in the data
+  center.
+\newblock In {\em Proceedings of the 8th USENIX Conference on Networked Systems
+  Design and Implementation}, NSDI'11, pages 295--308, Berkeley, CA, USA, 2011.
+  USENIX Association.
+
+\bibitem{Ousterhout:2013}
+Kay Ousterhout, Patrick Wendell, Matei Zaharia, and Ion Stoica.
+\newblock Sparrow: Distributed, low latency scheduling.
+\newblock In {\em Proceedings of the Twenty-Fourth ACM Symposium on Operating
+  Systems Principles}, SOSP '13, pages 69--84, New York, NY, USA, 2013. ACM.
+
+\bibitem{Shvachko:2010}
+Konstantin Shvachko, Hairong Kuang, Sanjay Radia, and Robert Chansler.
+\newblock The hadoop distributed file system.
+\newblock In {\em Proceedings of the 2010 IEEE 26th Symposium on Mass Storage
+  Systems and Technologies (MSST)}, MSST '10, pages 1--10, Washington, DC, USA,
+  2010. IEEE Computer Society.
+
+\bibitem{Vavilapalli2013}
+Vinod~Kumar Vavilapalli, Arun~C. Murthy, Chris Douglas, Sharad Agarwal, Mahadev
+  Konar, Robert Evans, Thomas Graves, Jason Lowe, Hitesh Shah, Siddharth Seth,
+  Bikas Saha, Carlo Curino, Owen O'Malley, Sanjay Radia, Benjamin Reed, and
+  Eric Baldeschwieler.
+\newblock Apache hadoop yarn: Yet another resource negotiator.
+\newblock In {\em Proceedings of the 4th Annual Symposium on Cloud Computing},
+  SOCC '13, pages 5:1--5:16, New York, NY, USA, 2013. ACM.
+
+\bibitem{Borg}
+Abhishek Verma, Luis Pedrosa, Madhukar~R. Korupolu, David Oppenheimer, Eric
+  Tune, and John Wilkes.
+\newblock Large-scale cluster management at {Google} with {Borg}.
+\newblock In {\em Proceedings of the European Conference on Computer Systems
+  (EuroSys)}, Bordeaux, France, 2015.
+
+\bibitem{Zaharia:EECS}
+Matei Zaharia, Dhruba Borthakur, Joydeep Sen~Sarma, Khaled Elmeleegy, Scott
+  Shenker, and Ion Stoica.
+\newblock Job scheduling for multi-user mapreduce clusters.
+\newblock Technical Report UCB/EECS-2009-55, EECS Department, University of
+  California, Berkeley, Apr 2009.
+
+\bibitem{Zaharia:2010}
+Matei Zaharia, Dhruba Borthakur, Joydeep Sen~Sarma, Khaled Elmeleegy, Scott
+  Shenker, and Ion Stoica.
+\newblock Delay scheduling: A simple technique for achieving locality and
+  fairness in cluster scheduling.
+\newblock In {\em Proceedings of the 5th European Conference on Computer
+  Systems}, EuroSys, 2010.
+
+\bibitem{Zaharia2012}
+Matei Zaharia, Mosharaf Chowdhury, Tathagata Das, and Ankur Dave.
+\newblock {Resilient distributed datasets: A fault-tolerant abstraction for
+  in-memory cluster computing}.
+\newblock pages 15----28, 2012.
+
+\bibitem{Zaharia:2008}
+Matei Zaharia, Andy Konwinski, Anthony~D. Joseph, Randy Katz, and Ion Stoica.
+\newblock Improving mapreduce performance in heterogeneous environments.
+\newblock In {\em Proceedings of the 8th USENIX Conference on Operating Systems
+  Design and Implementation}, OSDI, pages 29--42, 2008.
+
+\end{thebibliography}

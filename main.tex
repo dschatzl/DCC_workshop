@@ -248,7 +248,7 @@
 
 \definecolor{gpcolor}{rgb}{0.6,0.2,0.3}
 \newboolean{showcomments}
-\setboolean{showcomments}{false}
+\setboolean{showcomments}{true}
 \ifthenelse{\boolean{showcomments}}
 { \newcommand{\mynote}[3]{
     \fbox{\bfseries\sffamily\scriptsize#1}
@@ -275,7 +275,7 @@
 
 \bibliographystyle{plain}
 
-\title{Reducing latency in cloud processing/data stores via adaptive scheduling}
+\title{The Misbelief in Delay Scheduling}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \date{}
@@ -299,25 +299,8 @@
 \input{dynamic}
 \input{impl}
 \input{eval}
-
-
-\section{Conclusion}\label{sec:conclusion}
-
-Delay scheduling has long been accepted as a \textit{de facto} solution for achieving
-higher data locality (and assumedly better performance) in cluster framework schedulers that
-enforce fairness. We show that 
-delay scheduling, using a fixed delay interval, is inefficient, and can be improved by 
-adapting the delay interval on-the-fly, based on the overhead experienced by completed tasks. 
-An adaptive solution allows delay scheduling to find a proper balance between fairness and
-performance, based on changing network conditions, job profiles, and cluster usage.
-
-Regarding future work, there are other areas where adaptivity looks promising in the realm of
-delay scheduling. For example, the frequency with which tasks complete is major contributor
-to the probability that delay scheduling will actually provide locality, and could potentially
-be used as another adaptive improvement. Other feedback metrics (such as task completion time) 
-hold promise for improvements as well. Finally, avenues exist for optimally creating 
-schedules of tasks (rather than the greedy scheduling currently used), assuming enough accurate
-real-time feedback can be gained from running (or about to run) jobs. 
+\input{related}
+\input{conc}
 
 
 
@@ -328,7 +311,7 @@ real-time feedback can be gained from running (or about to run) jobs.
 %\clearpage
 \pagenumbering{arabic}
 %
-\bibliography{references}
+\bibliography{bib/predef,bib/msaeida} 
 
 \end{document}
 

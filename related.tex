@@ -1,0 +1,20 @@
+\section{Related Work}\label{sec:related}
+%There is much related work in the realm of cloud task scheduling.
+Google Borg~\cite{Verma2015} is a cluster manager that features robust fault tolerance and
+user isolation using containers. Borg features a centralized scheduler which assigns tasks to machines 
+based on fine-grained resource requirements, but Borg does not consider data locality (aside from scheduling
+tasks on machines that already have packages/programs that are needed). 
+Microsoft Apollo~\cite{Boutin2014} is a scheduling framework which uses distributed, 
+loosely synchronized schedulers to opportunistically schedule tasks, correcting conflicts should they arise.
+Apollo features a service which advertises load to schedulers to facilitate better scheduling decisions,
+but provides only probabilistic fairness guarantees; we
+hope to show that simple adaptive feedback metrics are enough to improve centralized scheduling in the presence
+of strict fairness enforcement.
+Sparrow~\cite{Ousterhout2013} is a distributed task scheduler, which focuses on a particular 
+set of high-frequency, interactive workloads. Sparrow features distributed, stateless scheduling 
+and randomized load balancing of tasks; however, its completely distributed nature makes enforcing
+fairness policies very difficult, and its benefits wane as workloads stray from the interactive scale.
+Finally, some schedulers (like Hadoop YARN's~\cite{Vavilapalli2013} Fair Scheduler) have begun implementing
+fixed delay scheduling as a skipcount proportional to the size (in number of nodes) of the compute cluster. 
+This approach adapts the interval to the size of the cluster, but not to the usage or load of the 
+cluster in real time.

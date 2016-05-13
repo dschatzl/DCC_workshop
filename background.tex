@@ -41,13 +41,12 @@ The argument behind why fixed delay scheduling is acceptable is a probabilistic 
 that slots free up frequently, the chance that an open slot will not overlap with a job's 
 input data decreases exponentially. This chance is further decreased by block replication 
 in distributed file systems (like HDFS), each of which can serve data for a task; however,
-having a constant delay interval leads to several caveats. What happens if the frequency of
-slot openings increases or decreases, thus changing the scheduling attempts available during
-the interval? As well, fixed delay scheduling is meant to remove the overhead caused by 
-network data transfers. What happens if this overhead changes? In some cases (when network conditions
-are poor), locality becomes even more important, while in others (if overhead is low) it is less so.
-Also, the importance locality can change from job to job, as input data sizes change.
-We explore these tradeoffs, as well as a simple dynamic solution, in Section~\ref{sec:dynamic}.
+this probabilistic approach relies on both a) a regular distribution of open slots across
+the cluster, and b) a constant slot opening frequency. If the frequency were to change (for
+example, if network conditions were to worsen and currently running tasks were to take longer to complete), 
+then the chance of achieving locality during the same fixed interval decreases. As well,
+variance in job profiles can lead to irregular distributions of slot openings (some tasks take
+longer than others, some jobs have data on only a subset of machines, etc.). 
 
 %\textbf{So? We need to complete this argument with a ``but'' to identify theoretically what can go wrong with constant delay scheduling}
 

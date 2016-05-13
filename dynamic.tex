@@ -75,19 +75,20 @@ measuring its own overhead, could set this as well and benefit from the adaptati
     \textbf{Scheduling Procedure:}\;
     \For{each open slot $s$ on a node $n$ in N}{
         sort $J$ in increasing order of currently running tasks\;
-    }
-    \For{$j$ in $J$}{
-        \If{$j$ has just launched a task}{
-            $j$.wait\_begin = current\_time\;
-        }
-        \eIf{a task $t$ in $j$ has data on $s$'s node $n$}{
-            launch t in $s$\;
-        }{
-            \If{a task $t$ in $j$ is unlaunched}{
-                \eIf {current\_time - $j$.wait\_begin > delay\_interval}{
-                    launch $t$ in slot $s$\;
-                }{
-                    continue\;
+    
+        \For{$j$ in $J$}{
+            \If{$j$ has just launched a task}{
+                $j$.wait\_begin = current\_time\;
+            }
+            \eIf{a task $t$ in $j$ has data on $s$'s node $n$}{
+                launch t in $s$\;
+            }{
+                \If{a task $t$ in $j$ is unlaunched}{
+                    \eIf {current\_time - $j$.wait\_begin $>$ delay\_interval}{
+                        launch $t$ in slot $s$\;
+                    }{
+                        continue\;
+                    }
                 }
             }
         }

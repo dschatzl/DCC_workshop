@@ -1,0 +1,10 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Delay Scheduling Background}{}% 2
+\BOOKMARK [1][-]{section.3}{Fixed Delay Scheduling in Cluster Frameworks}{}% 3
+\BOOKMARK [1][-]{section.4}{Dynamic Delay Scheduling}{}% 4
+\BOOKMARK [2][-]{subsection.4.1}{Beyond Constant Delays}{section.4}% 5
+\BOOKMARK [2][-]{subsection.4.2}{An Adaptive Solution Using Task Feedback}{section.4}% 6
+\BOOKMARK [1][-]{section.5}{Implementation in Spark}{}% 7
+\BOOKMARK [1][-]{section.6}{Evaluation}{}% 8
+\BOOKMARK [1][-]{section.7}{Conclusion and Related Work}{}% 9
+\BOOKMARK [1][-]{section*.5}{References}{}% 10

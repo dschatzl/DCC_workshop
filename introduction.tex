@@ -1,5 +1,5 @@
 \section{Introduction}\label{sec:intro}
-Cloud computing systems like Hadoop [ref], and Spark[ref] have been widely 
+Big-data processing frameworks like Hadoop~\cite{Shvachko:2010}, and Spark~\cite{Zaharia2012} have been widely 
 used in many companies such as Google, Yahoo, Facebook, and Microsoft. Their popularity 
 brings forth new problems in the realm of task scheduling and management in these systems,
 particularly with the rise of the cloud as a platform to host these frameworks.
@@ -34,26 +34,27 @@ with local data and remedy the fairness imbalance later?
     \endminipage
 \end{figure}
 
-The Hadoop Fair Scheduler (HFS) is an influential example of a cluster framework 
+The Hadoop Fair Scheduler (HFS)~\cite{Zaharia:EECS} is an influential example of a cluster framework 
 scheduler that seeks to find this balance. The HFS was designed with two main goals: 
-\textit{Fair sharing}: dividing resources using max-min fair sharing [ref] to achieve 
+\textit{Fair sharing}: dividing resources using max-min fair sharing~\cite{Zaharia2008} to achieve 
 statistical multiplexing, and 
 \textit{Data locality}: placing computations (tasks) near their input data as often as
-possible, to maximize system throughput.
+possible, to maximize system throughput. 
 
 To achieve the first goal (fair sharing), a scheduler must reallocate resources between 
 jobs when the number of jobs changes; however, a strict implementation of fair sharing 
 compromises locality, because the job to be scheduled next according to fairness might not
 have data on the nodes that are currently free. To resolve this problem, the HFS relaxes 
 fairness slightly through a simple algorithm called 
-\textit{delay scheduling}~\cite{Zaharia:2010}, in which a 
+\textit{delay scheduling}~\cite{Zaharia2010}, in which a 
 job waits for a fixed amount of time for additional scheduling opportunities on nodes 
 that have data for it, if none are available.
 
-The original delay scheduling work [ref] reported that a small amount of waiting is enough
+The original delay scheduling work~\cite{Zaharia2010} reported that a small amount of waiting is enough
 to bring locality close to 100\% (the chosen default value is three seconds). Since its 
 inception, delay scheduling has been used in other cluster framekwork schedulers, such as 
-Spark, as well as in resource managers, such as YARN[ref] and Mesos[ref]. 
+Spark, as well as in resource managers, such as YARN~\cite{Vavilapalli2013} and
+Mesos~\cite{Hindman2011}.
 
 Delay scheduling provides a simple solution for the scenario in 
 Figure~\ref{fig:cluster}. Job 1 will simply be delayed for a fixed interval (and a task
