@@ -14,6 +14,6 @@ Regarding future work, there are other areas where adaptivity looks promising in
 delay scheduling. For example, the frequency with which tasks complete is major contributor
 to the probability that delay scheduling will actually provide locality, and could potentially
 be used as another adaptive improvement. Other feedback metrics (such as task completion time) 
-hold promise for improvements/heuristics as well. Finally, avenues exist for optimally creating 
-schedules of tasks (rather than the greedy scheduling currently used), assuming enough accurate
-feedback can be gained from running (or about to run) jobs efficiently.
+hold promise for improvements/heuristics as well. We plan to evaluate these adaptive approaches
+with other varied workloads, such as TPC-DS. Another promising direction is the analysis of the applicability
+of this adaptivity to stream processing frameworks, such as Spark Streaming~\cite{Zaharia:2013str}.
