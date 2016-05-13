@@ -20,14 +20,15 @@ scheduling.
 Ideally, we want to minimize the task completion time of all tasks within a given job, 
 while also providing some guarantee as to the maximum latency introduced by the scheduler
 itself through delay scheduling. The goal of delay scheduling is to remove \textit{t\_netOH} by 
-scheduling a task locally, but if the task is delayed longer than the delay interval, 
+scheduling a task locally, but if the task is delayed longer than this \textit{t\_netOH}, 
 then it would have actually been more efficient in hindsight (in terms of task completion time) 
 to immediately schedule the task in the first open slot that was considered. 
 Conversely, if the delay interval is too short, then the task could potentially miss 
 scheduling opportunities with locality, which would result in a shorter completion time
 than scheduling without locality.
 
-Dynamic Delay Scheduling improves upon fixed delay scheduling by dynamically adapting the maximum 
+Dynamic Delay Scheduling improves upon fixed delay 
+scheduling by dynamically adapting the maximum 
 \textit{sch\_delay} equal to \textit{t\_netOH} on a per-task basis. This allows 
 for the longest waiting time for data-local slots while limiting the worst case task 
 running time to \textit{t\_compute + (2 * t\_netOH)}. In this way, the delay interval
@@ -69,7 +70,7 @@ measuring its own overhead, could set this as well and benefit from the adaptati
     \hrule width 0.4\textwidth
     \;
     \textbf{Upon receiving task $t$ completion event:}\;
-    delay\_interval $\leftarrow$ (delay\_interval + t.netOH) / 2\;
+    delay\_interval $\leftarrow$ (delay\_interval + t\_netOH) / 2\;
     \hrule width 0.4\textwidth
     \;
     \textbf{Scheduling Procedure:}\;

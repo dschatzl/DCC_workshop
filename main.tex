@@ -1,4 +1,4 @@
-\documentclass[10pt,conference,compsocconf,letterpaper]{IEEEtran}
+\documentclass[conference,compsocconf,letterpaper]{sig-alternate-per}
 %\documentclass[10pt,pdftex,a4paper]{article}%
 %\documentclass{sig-alt-release2}
 %\documentclass{llncs}
@@ -6,7 +6,7 @@
 \usepackage{float}
 \usepackage{float}
 % \floatstyle{boxed}
-% \restylefloat{figure}
+% \restylefloat{figure} 
 
 \usepackage{subfig}
 \usepackage{verbatim} 
@@ -15,7 +15,7 @@
 \usepackage{multicol}
 \usepackage{amsmath}
 \usepackage{color}
-\usepackage{framed}
+\usepackage{framed} 
 \usepackage{hyperref}
 \usepackage{macros}
 \usepackage{url}
@@ -42,14 +42,14 @@
 \usepackage{algpseudocode}
 \usepackage{ioa_code}
 
-\ifx\pdftexversion\undefined
-  \usepackage[dvips]{graphicx}
-\else
-  \usepackage[pdftex]{graphicx}
-  \DeclareGraphicsRule{*}{mps}{*}{}
-\fi
-
-\PassOptionsToPackage{pdftex}{graphicx}
+% \ifx\pdftexversion\undefined
+%   \usepackage[dvips]{graphicx}
+% \else
+%   \usepackage[pdftex]{graphicx}
+%   \DeclareGraphicsRule{*}{mps}{*}{}
+% \fi
+% 
+% \PassOptionsToPackage{pdftex}{graphicx}
 \usepackage{tikz}
 
 \usepackage{cleveref}
@@ -269,7 +269,7 @@
 %\pagestyle{plain}
 \input{macro}
 
-\IEEEoverridecommandlockouts
+% \IEEEoverridecommandlockouts
 
 \begin{document}
 
@@ -277,6 +277,32 @@
 
 \title{The Misbelief in Delay Scheduling}
 
+\numberofauthors{3}
+
+\author{
+% 1st. author
+\alignauthor
+Derek	Schatzlein\\
+       \affaddr{Purdue University}
+%        \\ \email{trovato@corporation.com}
+% 2nd. author
+\alignauthor 
+Srivatsan	Ravi\\
+       \affaddr{Purdue University}
+% 3rd. author
+\alignauthor Youngtae	Noh\\
+       \affaddr{Purdue University}
+\and  % use '\and' if you need 'another row' of author names
+% 4th. author
+\alignauthor Masoud	\\ Saeida Ardekani\titlenote{Now at Samsung Research
+America.}\\
+       \affaddr{Purdue University}
+% 5th. author
+\alignauthor Patrick	Eugster\\
+       \affaddr{Purdue University, TU Darmstadt}
+}
+
+ 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \date{}
 \maketitle
@@ -292,6 +318,7 @@
 \end{abstract}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\pagenumbering{arabic}
 
 \input{introduction}
 \input{background}
@@ -305,11 +332,11 @@
 
 
 
-
 %
 %\thispagestyle{empty}
 %\clearpage
-\pagenumbering{arabic}
+
+%\bibliographystyle{abbrv}
 %
 \bibliography{bib/predef,bib/msaeida} 
 

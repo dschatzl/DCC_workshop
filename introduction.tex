@@ -52,17 +52,19 @@ that have data for it, if none are available.
 
 The original delay scheduling work~\cite{Zaharia2010} reported that a small amount of waiting is enough
 to bring locality close to 100\% (the chosen default value is three seconds). Since its 
-inception, delay scheduling has been used in other cluster framekwork schedulers, such as 
+inception, delay scheduling has been used in other cluster framework schedulers, such as 
 Spark, as well as in resource managers, such as YARN~\cite{Vavilapalli2013} and
 Mesos~\cite{Hindman2011}.
 
 Delay scheduling provides a simple solution for the scenario in 
 Figure~\ref{fig:cluster}. Job 1 will simply be delayed for a fixed interval (and a task
 from Job 3 scheduled in its place) in the hopes that data-local slots will open up in 
-the future; however, delay scheduling assumes that data locality is always beneficial.
-In reality, the decision is not as simple. The importance of data locality depends on many
-factors, such as network conditions, input data size, disk i/o usage, and others. These
-conditions may change over time (or even during the execution of a job). As well, with clusters
+the future; however, delay scheduling assumes that a fixed waiting time always results
+in a good probability of achieving data locality, and that it will always benefit task completion time.
+In reality, the decision is not so simple, as the frequency of slot openings (and the penalty
+incurred from missing data locality) changes based on a number of factors, including
+network conditions, input data size, disk i/o usage, and others. These
+conditions may change over time, or even during the execution of a job. As well, with clusters
 in the public cloud becoming so common, cluster conditions can change as simultaneous user
 load changes, or after instances are stopped and restarted, potentially in a different physical
 configuration. So, the
@@ -71,7 +73,7 @@ a fixed, unchanging delay interval. We propose that an \emph{adaptive} mechanism
 in order to properly judge and exploit these tradeoffs between fairness and locality,
 based on feedback from the system.
 
-In this paper, we present Dynamic Delay Scheduling, a simple, low-state, adaptive
+In this paper, we present Dynamic Delay Scheduling, a \emph{simple}, \emph{low-state}, adaptive
 solution for task scheduling in the cloud, which improves job latency over
 fixed-interval delay scheduling. Dynamic Delay Scheduling operates by using feedback from finished
 tasks in the system, which report their perceived overhead from remote data
@@ -91,7 +93,8 @@ presents background on fixed delay scheduling as a concept. Section~\ref{sec:sys
 scheduling is implemented/mapped to real systems. Section~\ref{sec:dynamic} defines the terminology and
 design of Dynamic Delay Scheduling, our simple adaptive scheduling solution. Section~\ref{sec:impl} describes our
 lightweight implementation in Apache Spark. Section~\ref{sec:eval} demonstrates our evaluation of Dynamic
-Delay Scheduling, using our implementation in Spark under several workloads. Finally, 
+Delay Scheduling, using our implementation in Spark under several workloads. Finally,
+Section~\ref{sec:related} overviews related work while
 Section~\ref{sec:conclusion} provides closing remarks, and well as some future direction for further
 applying adaptive algorithms to other facets of task scheduling.
 %\textbf{Say a few words about expanding this work on adaptive algorithms}

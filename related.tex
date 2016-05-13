@@ -5,18 +5,27 @@ achieving fair sharing for jobs and data locality for tasks.
 Some schedulers (like Hadoop YARN's~\cite{Vavilapalli2013} Fair Scheduler) have begun implementing
 fixed delay scheduling as a skipcount proportional to the size (in number of nodes) of the compute cluster. 
 This approach adapts the interval to the size of the cluster, but not to the usage or load of the 
-cluster in real time.
+cluster in real time. Additionally, YARN considers coarse-grained resource allocations for entire frameworks, 
+as opposed to the finer-grained tasks we consider.
 
 Sparrow~\cite{Ousterhout2013} is a distributed task scheduler, which focuses on a particular 
 set of high-frequency, interactive workloads. Sparrow features distributed, stateless scheduling 
-and randomized load balancing of tasks; however, its completely distributed nature makes enforcing
-fairness policies very difficult, and its benefits wane as workloads stray from the interactive scale.
+and randomized load balancing of tasks to reduce job latency; however, its completely distributed nature makes enforcing 
+fairness policies challenging, and its benefits decrease as workloads stray from the interactive scale.
+Our goal, on the other hand, is to provide lower job latency for a diversity of workloads, 
+through simple adaptative techniques.
 
 There is also an extensive amount of work on scheduling for custom cluster-management frameworks that attempt to minimize task completion times.
 Quincy~\cite{Isard:2009} is a scheduling system which explores the tradeoffs of various types of fairness
 policy enforcement, in the presence of data locality concerns. In particular, Quincy focuses on the use
-of preemption, to enforce either fairness or locality based on a computed optimal schedule.
+of preemption, to enforce either fairness or locality based on a computed optimal schedule. One caveat to 
+this approach is that computing/recalculating a complete schedule causes increased overhead to making
+scheduling decisions. Our solution seeks to improve scheduling with very little extra overhead or state, keeping
+decisions fast.
 Microsoft Apollo~\cite{Boutin2014} is a scheduling framework which uses distributed, 
 loosely synchronized schedulers to opportunistically schedule tasks, correcting conflicts should they arise.
-Apollo features a service which advertises load to schedulers to facilitate better scheduling decisions,
-but provides only probabilistic fairness guarantees.
+Apollo features a service which advertises load to schedulers to facilitate better scheduling decisions. Unlike
+our system, Apollo's architecture has tight integration between resource management and job/task scheduling. We
+consider systems that schedule between/within jobs, which have to efficiently use resources already acquired and
+shared amongst running jobs.
+

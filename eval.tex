@@ -1,6 +1,25 @@
 
 \section{Evaluation}\label{sec:eval}
 
+
+\begin{figure}[t]
+    \minipage{0.5\textwidth}
+        \includegraphics[width=\linewidth]{./smallscale.png}
+        \caption{1GB Spark Sort - Job Completion Time (s) vs. Delay Type}
+        \label{fig:smallscale}
+    \endminipage \hfill
+\end{figure}
+
+\begin{figure*}[t]
+    \minipage{\textwidth}
+        \includegraphics[width=\linewidth]{./TPCH.png}
+        \caption{110GB Spark TPC-H Queries - Job Completion Time (s) vs. Delay Type}
+        \label{fig:largescale}
+    \endminipage \hfill
+\end{figure*}
+
+
+
 In order to test the efficiency of Dynamic Delay Scheduling, we have designed several 
 tests, on both a small and a large scale, using our implementation in Spark, with fair
 scheduling enabled. The goal of
@@ -67,19 +86,5 @@ as the default delay does in queries Q2, Q13, and Q16. This shows that Dynamic D
 can lower job latency by both a) removing excess waiting time in small jobs, and by b) 
 improving fairness vs. performance decisions in jobs with high resource contention.
 
-\begin{figure}[t]
-    \minipage{0.5\textwidth}
-        \includegraphics[width=\linewidth]{./smallscale.png}
-        \caption{1GB Spark Sort - Job Completion Time (s) vs. Delay Type}
-        \label{fig:smallscale}
-    \endminipage \hfill
-\end{figure}
 
-\begin{figure*}[t]
-    \minipage{\textwidth}
-        \includegraphics[width=\linewidth]{./TPCH.png}
-        \caption{110GB Spark TPC-H Queries - Job Completion Time (s) vs. Delay Type}
-        \label{fig:largescale}
-    \endminipage \hfill
-\end{figure*}
 

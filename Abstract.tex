@@ -12,4 +12,4 @@ however, a fixed delay interval is inefficient, as the ideal time to delay varie
 We propose an adaptive solution (Dynamic Delay Scheduling), which uses a simple feedback metric from finished tasks to adapt the delay scheduling interval for 
 subsequent tasks at runtime. We present a dynamic delay implementation in Spark, and show that it outperforms a fixed delay in TPC-H benchmarks. 
 Our preliminary experiments confirm our intuition that job latency in batch-processing scheduling can be improved
-using simple adaptive techniques without almost no extra state overhead.
+using simple adaptive techniques with almost no extra state overhead.
