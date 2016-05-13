@@ -1,0 +1,15 @@
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:
+Big-data processing frameworks like Hadoop and Spark, often used in multi-user environments, 
+have struggled to achieve a balance between the full utilization of cluster resources and fairness between users. 
+In particular, data locality becomes a concern, as enforcing fairness policies may cause poor placement of tasks in relation to the data on which they operate. 
+To combat this, the schedulers in many frameworks use a heuristic called delay scheduling, 
+which involves waiting for a short, constant interval for data-local task slots to become free if none are available; 
+however, a fixed delay interval is inefficient, as the ideal time to delay varies depending on input data size, network conditions, and other factors.
+
+We propose an adaptive solution (Dynamic Delay Scheduling), which uses a simple feedback metric from finished tasks to adapt the delay scheduling interval for 
+subsequent tasks at runtime. We present a dynamic delay implementation in Spark, and show that it outperforms a fixed delay in TPC-H benchmarks. 
+Our preliminary experiments confirm our intuition that job latency in batch-processing scheduling can be improved
+using simple adaptive techniques with almost no extra state overhead.

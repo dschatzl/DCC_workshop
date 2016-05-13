@@ -1,0 +1,348 @@
+\documentclass[conference,compsocconf,letterpaper]{sig-alternate-per}
+%\documentclass[10pt,pdftex,a4paper]{article}%
+%\documentclass{sig-alt-release2}
+%\documentclass{llncs}
+%\usepackage{llncsdoc}
+\usepackage{float}
+\usepackage{float}
+% \floatstyle{boxed}
+% \restylefloat{figure} 
+
+\usepackage{subfig}
+\usepackage{verbatim} 
+\usepackage{amssymb}
+\usepackage{lipsum}
+\usepackage{multicol}
+\usepackage{amsmath}
+\usepackage{color}
+\usepackage{framed} 
+\usepackage{hyperref}
+\usepackage{macros}
+\usepackage{url}
+\usepackage{xspace}
+\usepackage{xifthen}
+\usepackage{listings}
+%\usepackage{amsthm}
+\usepackage{cite}
+\usepackage{paralist}
+\usepackage{comment}
+\usepackage{parcolumns}
+\usepackage{fancyvrb}
+\usepackage[draft]{fixme}
+\newif\ifcode
+\codefalse
+%%%
+% comment this if you do not have
+% algpseudocode package for algorithms.
+\codetrue
+%%%
+%\usepackage{macros}
+\ifcode
+\usepackage[linesnumbered, ruled]{algorithm2e}
+\usepackage{algpseudocode}
+\usepackage{ioa_code}
+
+% \ifx\pdftexversion\undefined
+%   \usepackage[dvips]{graphicx}
+% \else
+%   \usepackage[pdftex]{graphicx}
+%   \DeclareGraphicsRule{*}{mps}{*}{}
+% \fi
+% 
+% \PassOptionsToPackage{pdftex}{graphicx}
+\usepackage{tikz}
+
+\usepackage{cleveref}
+\crefname{section}{\S}{\S\S}
+\newcommand{\RNum}[1]{\uppercase\expandafter{\romannumeral #1\relax}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%=
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+%pour avoir plus de place
+% \topmargin 0pt
+% \advance \topmargin by -\headheight
+% \advance \topmargin by -\headsep
+% \textheight 8.9in
+% \oddsidemargin 0pt
+% \evensidemargin \oddsidemargin
+% \marginparwidth 0.5in
+% \textwidth 6.5in
+% \setlength{\baselineskip}{13.2pt} % standard value is 13.75pt
+\def\algofont{\footnotesize} %fonte pour les algos
+%\interfootnotelinepenalty=10
+%fin de pour avoir plus de place
+%du coup il faut commenter la suite
+%\textwidth 130mm
+%\textheight 215mm
+%jusqu'ici
+%\renewcommand{\baselinestretch}{1.5}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Definitions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newtheorem{theorem}{Theorem}
+%\newtheorem{reptheorem}[]{Theorem \ref{th:sl}}
+%\newreptheorem{theorem}{Theorem}
+\newtheorem{axiom}[theorem]{Axiom}
+\newtheorem{case}[theorem]{Case}
+\newtheorem{claim}[theorem]{Claim}
+\newtheorem{proposition}{Proposition}
+\newtheorem{explanation}[theorem]{Explanation}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{fact}[theorem]{Fact}
+% \newtheorem{conclusion}[theorem]{Conclusion}
+% \newtheorem{condition}[theorem]{Condition}
+\newtheorem{conjecture}[theorem]{Conjecture}
+\newtheorem{corollary}[theorem]{Corollary}
+% \newtheorem{criterion}[theorem]{Criterion}
+\newtheorem{definition}{Definition}
+% \newtheorem{exercise}[theorem]{Exercise}
+\newtheorem{lemma}[theorem]{Lemma}
+% \newtheorem{notation}[theorem]{Notation}
+% \newtheorem{problem}[theorem]{Problem}
+%\newtheorem{proposition}[theorem]{Proposition}
+% \newtheorem{remark}[theorem]{Remark}
+% \newtheorem{solution}[theorem]{Solution}
+% \newtheorem{summary}[theorem]{Summary}
+\newtheorem{observation}[theorem]{Observation}
+%\newenvironment{proof}[1][Proof]{\noindent\textbf{#1.} }{\hfill $\Box$\\[2mm]} %\rule{0.5em}{0.5em}\\}
+%\newenvironment{proofsketch}[1][Proof sketch]{\noindent\textbf{#1.} }{\hfill $\Box$\\[2mm]} %\rule{0.5em}{0.5em}\\}
+\newenvironment{proofsketch}[1][Proof sketch]{\noindent\textbf{#1.} }{\hfill $\Box$\\[2mm]}
+
+\newenvironment{reptheorem}[1][Theorem]{\noindent\textbf{#1}}{}
+\def\lf{\tiny}
+\def\rrnnll{\setcounter{linenumber}{0}}
+\def\nnll{\refstepcounter{linenumber}\lf\thelinenumber}
+\newcounter{linenumber}
+\newenvironment{algorithmfig}{\hrule\vskip 3mm}{ \vskip 3mm \hrule }
+
+\def\P{\ensuremath{\mathcal{P}}}
+\def\DP{\ensuremath{\Diamond\mathcal{P}}}
+\def\DS{\ensuremath{\Diamond\mathcal{S}}}
+%\def\T{\ensuremath{\mathcal{T}}}
+\def\Time{\mathbb{T}}
+%\def\S{\ensuremath{\mathcal{S}}}
+\def\D{\ensuremath{\mathcal{D}}}
+\def\W{\ensuremath{\mathcal{W}}}
+\def\A{\ensuremath{\mathcal{A}}}
+\def\B{\ensuremath{\mathcal{B}}}
+\def\F{\ensuremath{\mathcal{F}}}
+\def\R{\ensuremath{\mathcal{R}}}
+\def\N{\ensuremath{\mathcal{N}}}
+\def\I{\ensuremath{\mathcal{I}}}
+\def\O{\ensuremath{\mathcal{O}}}
+\def\Q{\ensuremath{\mathcal{Q}}}
+\def\K{\ensuremath{\mathcal{K}}}
+\def\L{\ensuremath{\mathcal{L}}}
+\def\M{\ensuremath{\mathcal{M}}}
+\def\V{\ensuremath{\mathcal{V}}}
+\def\E{\ensuremath{\mathcal{E}}}
+\def\C{\ensuremath{\mathcal{C}}}
+\def\T{\ensuremath{\mathcal{T}}}
+\def\X{\ensuremath{\mathcal{X}}}
+\def\Y{\ensuremath{\mathcal{Y}}}
+\def\Nat{\ensuremath{\mathbb{N}}}
+\def\Om{\ensuremath{\Omega}}
+\def\ve{\varepsilon}
+\def\fd{failure detector}
+\def\cfd{\ensuremath{?\P+\DS}}
+\def\afd{timeless}
+\def\env{\ensuremath{\mathcal{E}}}
+%\def\faulty{unreliable}
+\def\bounded{one-shot}
+\def\cons{\textit{cons}}
+\def\val{\textit{val}}
+\def\code{\textit{code}}
+
+\def\HSS{\mathit{h}}
+\def\argmin{\mathit{argmin}}
+\def\proper{\mathit{proper}}
+\def\content{\mathit{content}}
+\def\Level{\mathit{L}}
+\def\Blocked{\mathit{Blocked}}
+\def\Set{\mathit{Set}}
+\def\dd{Dag}
+\newcommand{\LS}{LS}
+
+\newcommand{\correct}{\mathit{correct}}
+\newcommand{\faulty}{\mathit{faulty}}
+\newcommand{\infi}{\mathit{inf}}
+\newcommand{\live}{\mathit{live}}
+\newcommand{\true}{\mathit{true}}
+\newcommand{\false}{\mathit{false}}
+\newcommand{\stable}{\mathit{Stable}}
+\newcommand{\setcon}{\mathit{setcon}}
+\newcommand{\remove}[1]{}
+
+\newcommand{\Wset}{\textit{Wset}}
+\newcommand{\Rset}{\textit{Rset}}
+\newcommand{\Dset}{\textit{Dset}}
+
+%\newcommand{\parts}{\textit{parts}}
+\newcommand{\txns}{\textit{txns}}
+
+\newcommand{\Read}{\textit{read}}
+\newcommand{\Write}{\textit{write}}
+\newcommand{\TryC}{\textit{tryC}}
+\newcommand{\TryA}{\textit{tryA}}
+\newcommand{\ok}{\textit{ok}}
+
+\newcommand{\trylock}{\textit{trylock}}
+\newcommand{\multitrylock}{\textit{multi-trylock}}
+\newcommand{\CAS}{\textit{CAS}}
+\newcommand{\mCAS}{\textit{mCAS}}
+
+\def\Nomega{\ensuremath{\neg\Omega}}
+\def\Vomega{\ensuremath{\overrightarrow{\Omega}}}
+
+\newcommand{\id}[1]{\mbox{\textit{#1}}}% for identifiers in code
+\newcommand{\res}[1]{\mbox{\textbf{#1}}}% reserved words
+
+\newcommand{\ignore}[1]{}
+\newcommand{\hagitC}[1]{[[[HA: #1]]]}
+\newcommand{\petrC}[1]{[[[PK: #1]]]}
+\newcommand{\HOH}{\ms{HOH}}
+\newcommand{\TPL}{\ms{2PL}}
+\newcommand{\TM}{\M}
+\newcommand{\MP}{\ms{MP}}
+\newcommand{\CR}{\ms{CR}}
+\newcommand{\OP}{\ms{OP}}
+\newcommand{\LL}{\ms{LL}}
+
+\newcommand{\entrylabel}[1]{\hspace{1cm}\mbox{#1}\hfil}
+\newenvironment{entry}
+{\begin{list}{}
+    {\renewcommand{\makelabel}{\entrylabel}
+      \setlength{\labelwidth}{35pt}
+      \setlength{\leftmargin}{10pt} } } {\end{list}}
+
+% \nocaptionrule
+
+\renewcommand{\ttdefault}{pxtt}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+\lstset{frame=tb,
+  language=C++,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\sffamily},%\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=3,
+  morekeywords={[1]in},
+  morekeywords={[2]contexts,context,event,asynch,ro,readonly,messages,async,sync,broadcast,upcall,deliver,children,addOwnership,removeOwnership,contextclass,contextclasses, snapshot},
+  keywordstyle=[2]\color{red}
+}
+
+\VerbatimFootnotes
+
+\definecolor{gpcolor}{rgb}{0.6,0.2,0.3}
+\newboolean{showcomments}
+\setboolean{showcomments}{true}
+\ifthenelse{\boolean{showcomments}}
+{ \newcommand{\mynote}[3]{
+    \fbox{\bfseries\sffamily\scriptsize#1}
+    {\small$\blacktriangleright$\textsf{\emph{\color{#3}{#2}}}$\blacktriangleleft$}}
+}
+{
+\newcommand{\mynote}[3]{}}
+\newcommand{\gp}[1]{\mynote{Gustavo}{#1}{gpcolor}}
+\newcommand{\p}[1]{\mynote{Patrick}{#1}{magenta}}
+\newcommand{\masoud}[1]{\mynote{Masoud}{#1}{magenta}}
+\newcommand{\bsang}[1]{\mynote{bsang}{#1}{magenta}}
+\newcommand{\sr}[1]{\mynote{SR}{#1}{magenta}}
+
+\newcommand{\contextclass}{contextclass}
+
+\newcommand{\alg}{DDS}
+
+%\pagestyle{plain}
+\input{macro}
+
+% \IEEEoverridecommandlockouts
+
+\begin{document}
+
+\bibliographystyle{plain}
+
+\title{The Misbelief in Delay Scheduling}
+
+\numberofauthors{3}
+
+\author{
+% 1st. author
+\alignauthor
+Derek	Schatzlein\\
+       \affaddr{Purdue University}
+%        \\ \email{trovato@corporation.com}
+% 2nd. author
+\alignauthor 
+Srivatsan	Ravi\\
+       \affaddr{Purdue University}
+% 3rd. author
+\alignauthor Youngtae	Noh\\
+       \affaddr{Purdue University}
+\and  % use '\and' if you need 'another row' of author names
+% 4th. author
+\alignauthor Masoud	\\ Saeida Ardekani\titlenote{Now at Samsung Research
+America.}\\
+       \affaddr{Purdue University}
+% 5th. author
+\alignauthor Patrick	Eugster\\
+       \affaddr{Purdue University, TU Darmstadt}
+}
+
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\date{}
+\maketitle
+
+% \renewcommand*\thesection{\arabic{section}}
+%\renewcommand*\thesubsection{\thesection.\arabic{subsection}}
+% \renewcommand*\thesubsection{\arabic{section}.\arabic{subsection}}
+
+
+\begin{abstract}
+%
+\input{Abstract}
+\end{abstract}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagenumbering{arabic}
+
+\input{introduction}
+\input{background}
+\input{systems}
+\input{dynamic}
+\input{impl}
+\input{eval}
+\input{related}
+\input{conc}
+
+
+
+
+%
+%\thispagestyle{empty}
+%\clearpage
+
+%\bibliographystyle{abbrv}
+%
+\bibliography{bib/predef,bib/msaeida} 
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

@@ -1,0 +1,55 @@
+\section{Delay Scheduling Background}\label{sec:background}
+
+Delay scheduling is a heuristic designed to improve the data locality of tasks in the
+context of fairness policy enforcement. We consider a cluster computing setting, where each 
+application (or job), when submitted, is divided into many tasks which can be executed in 
+parallel. The main components involved are: 1) a set of \textit{N} compute nodes, each with 
+\textit{S} slots (one slot can run one task at a time), 2) a set of \textit{J} jobs, each 
+with \textit{T} tasks, and 3) a set of \textit{D} blocks of data, distributed across the 
+compute nodes, where each task in a job operates on one (specific) block.
+
+To constitute fairness, each of the \textit{J} jobs must have an equal share of the 
+cluster's resources. If there are 2 jobs, then each gets half of the cluster, if there 
+are 3, then a third, etc. To implement this, a fair scheduler must maintain a sorted 
+queue of the remaining jobs, based on their current share of the cluster. The job with 
+the least running tasks (the job farthest below its fair share of resources) is at the 
+head of this queue. Let us call this job \textit{J\_priority}. Tasks from this job will 
+take priority over the rest in the queue.
+   
+An observation that can be made is that, when a compute slot opens up on one of the 
+\textit{N} nodes, there might not be any data blocks on the node that the tasks of 
+\textit{J\_priority} need. This is called \textit{data locality}. A task can 
+be considered to be data local when it is scheduled in a slot on a node colocated with its
+data. Fairness enforcement compromises data locality, because the next job in the 
+scheduler's queue (based on fairness priority) might not have data in the next open slot 
+in the cluster. Tasks that run non-locally must pull their input data in from across the 
+network, causing an increase in completion time.
+
+Traditional fixed delay scheduling operates in the following way: if 
+\textit{J\_priority} does not have any data blocks it needs in the slot currently being 
+considered, it will be temporarily skipped, and a task from a job further down the queue 
+(a lower priority job) will be scheduled instead. \textit{J\_priority} will remain at the 
+head of the queue (because it is still farthest below its fair share). 
+\textit{J\_priority} will thus be the highest priority job for the next slot that opens 
+up, which hopefully will have data it needs. After a finite number of failed scheduling 
+attempts (skips), \textit{J\_priority} will be scheduled in the next open slot regardless 
+of locality. The maximum number of skips is usually determined by the number of scheduling
+attempts that occur within a certain interval of time (a few seconds). We can call this
+interval of time the \textit{delay interval}.
+
+The argument behind why fixed delay scheduling is acceptable is a probabilistic one. Assuming 
+that slots free up frequently, the chance that an open slot will not overlap with a job's 
+input data decreases exponentially. This chance is further decreased by block replication 
+in distributed file systems (like HDFS), each of which can serve data for a task; however,
+this probabilistic approach relies on both a) an equal probability of slots opening up on each machine across
+the cluster, and b) a constant slot opening frequency. If the frequency were to change (for
+example, if network conditions were to worsen and currently running tasks were to take longer to complete), 
+then the chance of achieving locality during the same fixed interval decreases. As well,
+variance in job profiles can lead to skewed probabilities of slot openings from machine
+to machine (some tasks take
+longer than others, some jobs have data on only a subset of machines, etc.). 
+
+%\textbf{So? We need to complete this argument with a ``but'' to identify theoretically what can go wrong with constant delay scheduling}
+
+%\textbf{Also, are we using delay scheduling to refer to ``constant'' delay scheduling by default?}
+
