@@ -13,8 +13,8 @@ useful to multiple users at load.
 
 Figure~\ref{fig:cluster}  demonstrates these tradeoffs between data locality and fairness,
 in a simple four-machine cluster. We consider a
-scenario where a "job" consists of many smaller tasks, and each node in the cluster 
-has a finite number of "slots" which provide resources for tasks. Every task has input data,
+scenario where a ``job'' consists of many smaller tasks, and each node in the cluster 
+has a finite number of ``slots'' which provide resources for tasks. Every task has input data,
 located in some distributed file system in blocks across the cluster. When a slot
 becomes available (a slot representing the resources to run a single task),
 a scheduler that provides fair sharing needs to schedule tasks from the job 

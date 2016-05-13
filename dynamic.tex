@@ -37,7 +37,51 @@ then the scheduler increases the time that it waits, as locality is more importa
 conditions; however, this means that the 
 network overhead incurred by running tasks needs to be monitored and reported to the 
 scheduler over time, in order to adapt to changing network conditions and potentially 
-heterogeneous data block sizes. 
+heterogeneous data block sizes. To calculate the network overheads (i.e., one-way trip delay + data transferring time), we can use the ping utility to calculate one-way trip (i.e., round-trip time / 2) while available bandwidth between source and destination nodes over the network can be calculated with available bandwidth measurement tools, which will be further discussed in the following Section.
+
+%What else can affect on:
+%Preemption
+%Scheduler policies (fairness or more locality)
+
+\subsection{Available Bandwidth in Datacenter Environments}\label{sec:band}
+
+
+\begin{figure}[t]
+	\minipage{0.5\textwidth}
+		\includegraphics[width=\linewidth]{./figures/avail-bw.eps}
+		\caption{avail-bw as a function of offered cross-traffic load}
+		\label{fig:avail-bw}
+	\endminipage \hfill
+\end{figure}
+
+The available bandwidth (avail-bw) in a network path is of major importance in
+congestion control, streaming applications, QoS verification, server selection,
+and overlay networks. Several tools (i.e., Pathload, yaz, spruce, abing, dietTopp,
+ASSOLO, Abing, IGI, pathChirp, PTR, and etc.) have been introduced and verified
+on the Internet~\cite{Goldoni:2010}. However, avail-bw measurements in datacenter environments have not been performed yet.
+Considering network condition differences between the Internet and datacenters,
+network topology in datacenters has relatively simpler and lesser hops in
+end-to-end paths. Among the available avail-bw measurment tools, we tested
+pathload~\cite{ Jain:2003}, ASSOLO~\cite{Goldoni:2009}, and pathChrip~\cite{Ribeiro:2005}
+ based on their accuracy and intrusiveness.
+ We use D-ITG~\cite{Botta:2012} as a traffic generator and vary cross traffic load from 100 Mbps
+  and 900 Mbps in 1Gbps end-to-end path capacity. We measure each tool on
+  how much avail-bw varies based on offered loads. To avoid edge effects, we started
+ measurement tools several seconds later after starting cross-traffic and reported each measurement over a 300 second duration.
+ As shown in Figure~\ref{fig:avail-bw}, we have confirmed that Pathload and ASSOLO
+ provided similar behavior and quite high fidelity, while pathChrip consistently overestimates
+ available bandwidth by more than 10\%, which is a well-known issue and also reported in~\cite{Goldoni:2010, Shriram:2005}.
+
+Intrusiveness is another important metric of avail-bw measurement tools, as it causes a significant decrease in the avail-bw and increases delays or losses. This can be measured by how much probe traffic has been injected during the measurement. As reported in ~\cite{Goldoni:2010}, ASSOLO and pathChrip inject probe traffic lesser than 0.3 Mbits/sec, while Pathload injects probe traffic more than 30 Mbits/sec. Compared to Pathload and pathChrip, ASSOLO provides better tradeoffs between accuracy and intrusiveness. Thus, we adopt ASSOLO as our network available bandwidth measurement tool.  A recent 19 months measurement study regarding a wide variety of applications on Amazon EC2 has reported that EC2 provides stead network conditions such as bandwidth and latency to provide reliable performance to support bandwidth-intensive and latency-sensitive applications~\cite{Hajjat:2015}.
+
+
+% It has also reported that traffic in datacenter has steady network condition on EC2 ("Application-speific configuration selection in the cloud by Hajjat et al"
+
+
+%Throughly analyze all O/Hs caused by choosing machine in the same rack and a different rack (RRT/2, NIC data rate (i.e, Tx and Rx), E2E available bandwidth, additional operation (i.e., serialization and deserialization, and etc.)
+
+%Stable bandwidth in Amazon EC2 ~\cite{Hajjat:2015}
+
 
 \subsection{An Adaptive Solution Using Task Feedback}
 
